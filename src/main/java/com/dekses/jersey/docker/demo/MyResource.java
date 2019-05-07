@@ -36,8 +36,8 @@ public class MyResource {
     // /contextPath/servletPath/employees
     @POST
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-    public Patient addEmployee(Patient p) {
-        return PatientDAO.addPatient(p);
+    public void addEmployee(Patient p) {
+        PatientDAO.addPatient(p);
     }
  
     @PUT

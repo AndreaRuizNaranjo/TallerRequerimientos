@@ -1,5 +1,9 @@
 package com.dekses.jersey.docker.demo;
 
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBCollection;
+import com.mongodb.DBObject;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -9,6 +13,8 @@ import java.util.Map;
 public class PatientDAO {
 
     private static final Map<String, Patient> PATIENTS_MAP = new HashMap<String, Patient>();
+    private final static String HOST = "localhost";
+    private final static int PORT = 27017;
 
     static {
         initPatient();
@@ -28,9 +34,27 @@ public class PatientDAO {
         return PATIENTS_MAP.get(id);
     }
 
-    public static Patient addPatient(Patient p) {
-        PATIENTS_MAP.put(p.getId(), p);
-        return p;
+    public static void addPatient(Patient p) {
+
+        try {
+
+            Singleton conexion = Singleton.getInstance();
+
+            DBCollection coll = conexion.getDb().getCollection("patient");
+            DBObject doc = new BasicDBObject("nombre", p.getName())
+                    .append("address", p.getAddress())
+                    .append("birth", p.getBirth())
+                    .append("telephone", p.getTelephone())
+                    .append("medicare", p.getMedicare())
+                    .append("status", p.getStatus());
+
+            coll.insert(doc);
+
+        } catch (UnknownHostException e) {
+            System.err.println(e.getClass().getName() + ": "
+                    + e.getMessage());
+        }
+
     }
 
     public static Patient updatePatient(Patient p) {
@@ -39,7 +63,21 @@ public class PatientDAO {
     }
 
     public static void deletePatient(String id) {
-        PATIENTS_MAP.remove(id);
+        try {
+
+            Singleton conexion = Singleton.getInstance();
+
+            DBCollection coll = conexion.getDb().getCollection("patient");
+            DBObject document = new BasicDBObject();
+            document.put("id", id);
+
+            coll.remove(document);
+
+        } catch (UnknownHostException e) {
+            System.err.println(e.getClass().getName() + ": "
+                    + e.getMessage());
+        }
+        
     }
 
     public static List<Patient> getAllPatient() {
