@@ -9,6 +9,8 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import javax.ws.rs.core.MediaType;
 
@@ -63,17 +65,29 @@ public class Main {
             System.out.println("Bienvenido al sistema de pacientes");
 
             do {
+
                 System.out.println("1. Mostrar Todos \n 2. Crear. \n 3. Buscar. \n 4.Modificar \n 5. Borrar \n 6. Salir");
                 opcion = lectura.nextInt();
+
+                ObjectMapper mapper = new ObjectMapper();
+
                 switch (opcion) {
                     case 1: // Mostrar Todos
+
+                        webResource = client.resource("http://localhost:8090/myApp/myresource");
+                        List Patients = PatientDAO.getAllPatient();
+
+                        for (int i = 0; i < Patients.size(); i++) {
+                            Patient paciente = (Patient) Patients.get(i);
+                            paciente.toString();
+                        }
 
                         break;
 
                     case 2: // Crear
+
                         webResource = client.resource("http://localhost:8090/myApp/myresource");
 
-                        ObjectMapper mapper = new ObjectMapper();
                         Patient paciente = new Patient();
 
                         System.out.println("Ingrese el nombre");
@@ -87,24 +101,20 @@ public class Main {
                         System.out.println("Ingrese la fecha de nacimiento");
                         String fechanacimiento = lectura.next();
                         paciente.setBirth(fechanacimiento);
-                        
+
                         System.out.println("Ingrese el numero telefonico");
                         String numerotelefono = lectura.next();
                         paciente.setTelephone(numerotelefono);
-                        
+
                         System.out.println("Ingrese el medicare");
                         String medicare = lectura.next();
                         paciente.setMedicare(medicare);
-                        
+
                         System.out.println("Ingrese el status");
                         String status = lectura.next();
                         paciente.setStatus(status);
-                        
-                        
 
                         String input = mapper.writeValueAsString(paciente);
-                        //Luego se utilizara Jackson
-                        //String input = "{\"empNo\":\"E11\",\"empName\":\"" + nombre + "\",\"position\":\"Salesman\"}";
 
                         response = webResource.type(MediaType.APPLICATION_JSON).put(ClientResponse.class, input);
 
@@ -116,23 +126,73 @@ public class Main {
 
                         String output = response.getEntity(String.class);
                         System.out.println(output);
-                        break;
-                    case 3:
-                        
+
+                        System.out.println("Listo! c: ");
 
                         break;
-                        
-                      case 4:
-                        
 
-                        break;   
-                        
-                    case 5:
-                        
+                    case 3: // Buscar.
+
+                        webResource = client.resource("http://localhost:8090/myApp/myresource");
+
+                        System.out.println("Digite el nombre del usuario a buscar: \n");
+                        String id = lectura.next();
+
+                        Patient pacienteRetorno = PatientDAO.getPatient(id);
+                        pacienteRetorno.toString();
 
                         break;
-                    default:
-                        System.out.println("Opcion invalida");
+
+                    case 4: // Modificar.
+
+                        webResource = client.resource("http://localhost:8090/myApp/myresource");
+
+                        paciente = new Patient();
+
+                        System.out.println("Ingrese el nuevo nombre");
+                        nombre = lectura.next();
+                        paciente.setName(nombre);
+
+                        System.out.println("Ingrese la nueva direccion");
+                        direccion = lectura.next();
+                        paciente.setAddress(direccion);
+
+                        System.out.println("Ingrese la nueva fecha de nacimiento");
+                        fechanacimiento = lectura.next();
+                        paciente.setBirth(fechanacimiento);
+
+                        System.out.println("Ingrese el nuevo numero telefonico");
+                        numerotelefono = lectura.next();
+                        paciente.setTelephone(numerotelefono);
+
+                        System.out.println("Ingrese el nuevo medicare");
+                        medicare = lectura.next();
+                        paciente.setMedicare(medicare);
+
+                        System.out.println("Ingrese el nuevo status");
+                        status = lectura.next();
+                        paciente.setStatus(status);
+
+                        PatientDAO.updatePatient(paciente);
+                        System.out.println("Listo! c: ");
+
+                        break;
+
+                    case 5: // Borrar.
+
+                        webResource = client.resource("http://localhost:8090/myApp/myresource");
+
+                        System.out.println("Digite el nombre del usuario a eliminar: \n");
+                        nombre = lectura.next();
+
+                        PatientDAO.deletePatient(nombre);
+                        System.out.println("Listo! c: ");
+
+                        break;
+
+                    default: // Salir.
+                        lectura.close();
+                        System.out.println("Adiós! :c ");
 
                 }
 

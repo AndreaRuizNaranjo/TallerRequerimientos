@@ -19,18 +19,18 @@ public class MyResource {
 
     @GET
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-    public List<Patient> getPatient_JSON() {
-        //List<Patient> listOfCountries = PatientDAO.getAllPatient();
-        return null;
+    public List<Patient> getPatient_JSON() throws UnknownHostException {
+        List<Patient> listOfPatients = PatientDAO.getAllPatient();
+        return listOfPatients;
     }
  
     // URI:
     // /contextPath/servletPath/employees/{empNo}
     @GET
-    @Path("/{id}")
+    @Path("/{nombre}")
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-    public Patient getPatient(@PathParam("id") String id) throws UnknownHostException {
-        return PatientDAO.getPatient(id);
+    public Patient getPatient(@PathParam("nombre") String nombre) throws UnknownHostException {
+        return PatientDAO.getPatient(nombre);
     }
  
     // URI:
@@ -48,10 +48,10 @@ public class MyResource {
     }
  
     @DELETE
-    @Path("/{id}")
+    @Path("/{nombre}")
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-    public void deletePatient(@PathParam("id") String id) {
-        PatientDAO.deletePatient(id);
+    public void deletePatient(@PathParam("nombre") String nombre) {
+        PatientDAO.deletePatient(nombre);
     }    
     
 }

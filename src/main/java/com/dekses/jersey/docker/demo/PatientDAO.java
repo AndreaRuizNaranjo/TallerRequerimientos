@@ -11,14 +11,14 @@ import java.util.List;
 
 public class PatientDAO {
 
-    public static Patient getPatient(String id) throws UnknownHostException {
+    public static Patient getPatient(String nombre) throws UnknownHostException {
 
         Singleton conexion = Singleton.getInstance();
 
         DBCollection coll = conexion.getDb().getCollection("patient");
 
         Gson gson = new Gson();
-        DBObject doc = new BasicDBObject("id", id);
+        DBObject doc = new BasicDBObject("nombre", nombre);
 
         DBObject obj = coll.findOne(doc);
         Patient p = gson.fromJson(obj.toString(), Patient.class);
@@ -72,17 +72,17 @@ public class PatientDAO {
         
     }
 
-    public static void deletePatient(String id) {
+    public static void deletePatient(String nombre) {
         try {
 
             Singleton conexion = Singleton.getInstance();
 
             DBCollection coll = conexion.getDb().getCollection("patient");
             DBObject document = new BasicDBObject();
-            document.put("id", id);
+            document.put("nombre", nombre);
 
             coll.remove(document);
-            System.out.println("Paciente con id: " + id + " eliminado exitosamente.");
+            System.out.println("Paciente con nombre: " + nombre + " eliminado exitosamente.");
 
         } catch (UnknownHostException e) {
             System.err.println(e.getClass().getName() + ": "
