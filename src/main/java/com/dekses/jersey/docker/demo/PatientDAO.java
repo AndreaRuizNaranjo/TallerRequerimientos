@@ -1,37 +1,31 @@
 package com.dekses.jersey.docker.demo;
 
+import com.google.gson.Gson;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class PatientDAO {
 
-    private static final Map<String, Patient> PATIENTS_MAP = new HashMap<String, Patient>();
-    private final static String HOST = "localhost";
-    private final static int PORT = 27017;
+    public static Patient getPatient(String id) throws UnknownHostException {
 
-    static {
-        initPatient();
-    }
+        Singleton conexion = Singleton.getInstance();
 
-    private static void initPatient() {
-        Patient p1 = new Patient("1", "Sara Chamseddine", "Bogotá", "1998 02 05", "03 9002 4002", "(M9999999)", "public");
-        Patient p2 = new Patient("2", "Andrea Ruiz", "Bogotá", "1996 02 05", "03 9001 4002", "(M9999992)", "private");
-        Patient p3 = new Patient("3", "Jeferson Cruz", "Bogotá", "1997 02 05", "03 9003 4002", "(M9999991)", "public");
+        DBCollection coll = conexion.getDb().getCollection("patient");
 
-        PATIENTS_MAP.put(p1.getId(), p1);
-        PATIENTS_MAP.put(p2.getId(), p2);
-        PATIENTS_MAP.put(p3.getId(), p3);
-    }
+        Gson gson = new Gson();
+        DBObject doc = new BasicDBObject("id", id);
 
-    public static Patient getPatient(String id) {
-        return PATIENTS_MAP.get(id);
+        DBObject obj = coll.findOne(doc);
+        Patient p = gson.fromJson(obj.toString(), Patient.class);
+        System.out.println("Found customer " + p);
+
+        return p;
+
     }
 
     public static void addPatient(Patient p) {
@@ -49,6 +43,7 @@ public class PatientDAO {
                     .append("status", p.getStatus());
 
             coll.insert(doc);
+            System.out.println("Paciente " + p.getName() + " agregado exitosamente.");
 
         } catch (UnknownHostException e) {
             System.err.println(e.getClass().getName() + ": "
@@ -57,9 +52,24 @@ public class PatientDAO {
 
     }
 
-    public static Patient updatePatient(Patient p) {
-        PATIENTS_MAP.put(p.getId(), p);
-        return p;
+    public static void updatePatient(Patient p) throws UnknownHostException {
+
+        Singleton conexion = Singleton.getInstance();
+
+        DBCollection coll = conexion.getDb().getCollection("patient");
+        DBObject document = new BasicDBObject();
+        document.put("id", p.getId());
+
+        DBObject searchQuery = new BasicDBObject().append("nombre", p.getName())
+                .append("address", p.getAddress())
+                .append("birth", p.getBirth())
+                .append("telephone", p.getTelephone())
+                .append("medicare", p.getMedicare())
+                .append("status", p.getStatus());
+        coll.update(searchQuery, document);
+
+        System.out.println("Paciente " + p.getName() + " modificado exitosamente.");
+        
     }
 
     public static void deletePatient(String id) {
@@ -72,21 +82,45 @@ public class PatientDAO {
             document.put("id", id);
 
             coll.remove(document);
+            System.out.println("Paciente con id: " + id + " eliminado exitosamente.");
 
         } catch (UnknownHostException e) {
             System.err.println(e.getClass().getName() + ": "
                     + e.getMessage());
         }
-        
+
     }
 
-    public static List<Patient> getAllPatient() {
-        Collection<Patient> c = PATIENTS_MAP.values();
-        List<Patient> list = new ArrayList<>();
-        list.addAll(c);
-        return list;
-    }
+    public static List getAllPatient() throws UnknownHostException {
 
-    List<Patient> list;
+        List<Patient> Patients = new ArrayList();
+
+        try {
+
+            Singleton conexion = Singleton.getInstance();
+
+            DBCollection coll = conexion.getDb().getCollection("patient");
+            DBCursor cursor = coll.find();
+            try {
+                while (cursor.hasNext()) {
+                    DBObject object = cursor.next();
+                    Gson gson = new Gson();
+                    Patient p = gson.fromJson(object.toString(), Patient.class);
+                    Patients.add(p);
+                    System.out.println("Se encontraron todos los pacientes.");
+
+                }
+            } finally {
+                cursor.close();
+            }
+
+        } catch (UnknownHostException e) {
+            System.err.println(e.getClass().getName() + ": "
+                    + e.getMessage());
+        }
+
+        return Patients;
+
+    }
 
 }

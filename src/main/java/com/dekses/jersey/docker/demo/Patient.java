@@ -87,7 +87,10 @@ public class Patient {
     public void setStatus(String status) {
         this.status = status;
     }
-    
-    
+
+    @Override
+    public String toString() {
+        return "Patient{" + "id=" + id + ", name=" + name + ", address=" + address + ", birth=" + birth + ", telephone=" + telephone + ", medicare=" + medicare + ", status=" + status + '}';
+    }
     
 }

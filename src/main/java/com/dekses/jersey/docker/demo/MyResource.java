@@ -1,5 +1,6 @@
 package com.dekses.jersey.docker.demo;
 
+import java.net.UnknownHostException;
 import java.util.List;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -19,8 +20,8 @@ public class MyResource {
     @GET
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public List<Patient> getPatient_JSON() {
-        List<Patient> listOfCountries = PatientDAO.getAllPatient();
-        return listOfCountries;
+        //List<Patient> listOfCountries = PatientDAO.getAllPatient();
+        return null;
     }
  
     // URI:
@@ -28,7 +29,7 @@ public class MyResource {
     @GET
     @Path("/{id}")
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-    public Patient getEmployee(@PathParam("id") String id) {
+    public Patient getPatient(@PathParam("id") String id) throws UnknownHostException {
         return PatientDAO.getPatient(id);
     }
  
@@ -36,14 +37,14 @@ public class MyResource {
     // /contextPath/servletPath/employees
     @POST
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-    public void addEmployee(Patient p) {
+    public void addPatient(Patient p) {
         PatientDAO.addPatient(p);
     }
  
     @PUT
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-    public Patient updatePatient(Patient p) {
-        return PatientDAO.updatePatient(p);
+    public void updatePatient(Patient p) throws UnknownHostException {
+        PatientDAO.updatePatient(p);
     }
  
     @DELETE
