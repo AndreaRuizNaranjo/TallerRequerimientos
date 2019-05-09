@@ -18,7 +18,7 @@ public class PatientDAO {
         DBCollection coll = conexion.getDb().getCollection("patient");
 
         Gson gson = new Gson();
-        DBObject doc = new BasicDBObject("nombre", nombre);
+        DBObject doc = new BasicDBObject("name", nombre);
 
         DBObject obj = coll.findOne(doc);
         Patient p = gson.fromJson(obj.toString(), Patient.class);
@@ -35,7 +35,7 @@ public class PatientDAO {
             Singleton conexion = Singleton.getInstance();
 
             DBCollection coll = conexion.getDb().getCollection("patient");
-            DBObject doc = new BasicDBObject("nombre", p.getName())
+            DBObject doc = new BasicDBObject("name", p.getName())
                     .append("address", p.getAddress())
                     .append("birth", p.getBirth())
                     .append("telephone", p.getTelephone())
@@ -60,7 +60,7 @@ public class PatientDAO {
         DBObject document = new BasicDBObject();
         document.put("id", p.getId());
 
-        DBObject searchQuery = new BasicDBObject().append("nombre", p.getName())
+        DBObject searchQuery = new BasicDBObject().append("name", p.getName())
                 .append("address", p.getAddress())
                 .append("birth", p.getBirth())
                 .append("telephone", p.getTelephone())
@@ -79,7 +79,7 @@ public class PatientDAO {
 
             DBCollection coll = conexion.getDb().getCollection("patient");
             DBObject document = new BasicDBObject();
-            document.put("nombre", nombre);
+            document.put("name", nombre);
 
             coll.remove(document);
             System.out.println("Paciente con nombre: " + nombre + " eliminado exitosamente.");

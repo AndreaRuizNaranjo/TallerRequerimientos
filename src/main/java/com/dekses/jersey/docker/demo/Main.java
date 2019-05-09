@@ -9,7 +9,6 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 import java.io.IOException;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import javax.ws.rs.core.MediaType;
@@ -54,8 +53,10 @@ public class Main {
         final HttpServer server = startServer();
         System.out.println(String.format("Jersey app started with WADL available at "
                 + "%sapplication.wadl\nHit enter to stop it...", BASE_URI));
-        System.in.read();
-        server.stop();
+        // System.in.read();
+        // server.stop();
+
+        webResource = client.resource("http://localhost:8080/myapp/myresource");
 
         try {
 
@@ -63,6 +64,7 @@ public class Main {
 
             Scanner lectura = new Scanner(System.in);
             System.out.println("Bienvenido al sistema de pacientes");
+            Patient paciente = new Patient();
 
             do {
 
@@ -74,21 +76,16 @@ public class Main {
                 switch (opcion) {
                     case 1: // Mostrar Todos
 
-                        webResource = client.resource("http://localhost:8090/myApp/myresource");
                         List Patients = PatientDAO.getAllPatient();
 
                         for (int i = 0; i < Patients.size(); i++) {
-                            Patient paciente = (Patient) Patients.get(i);
+                            paciente = (Patient) Patients.get(i);
                             paciente.toString();
                         }
 
                         break;
 
                     case 2: // Crear
-
-                        webResource = client.resource("http://localhost:8090/myApp/myresource");
-
-                        Patient paciente = new Patient();
 
                         System.out.println("Ingrese el nombre");
                         String nombre = lectura.next();
@@ -118,22 +115,13 @@ public class Main {
 
                         response = webResource.type(MediaType.APPLICATION_JSON).put(ClientResponse.class, input);
 
-                        if (response.getStatus() != 200) {
-                            System.out.println(response.toString());
-                            throw new RuntimeException("Failed : HTTP error code : "
-                                    + response.getStatus());
-                        }
-
-                        String output = response.getEntity(String.class);
-                        System.out.println(output);
+                        PatientDAO.addPatient(paciente);
 
                         System.out.println("Listo! c: ");
 
                         break;
 
                     case 3: // Buscar.
-
-                        webResource = client.resource("http://localhost:8090/myApp/myresource");
 
                         System.out.println("Digite el nombre del usuario a buscar: \n");
                         String id = lectura.next();
@@ -144,10 +132,6 @@ public class Main {
                         break;
 
                     case 4: // Modificar.
-
-                        webResource = client.resource("http://localhost:8090/myApp/myresource");
-
-                        paciente = new Patient();
 
                         System.out.println("Ingrese el nuevo nombre");
                         nombre = lectura.next();
@@ -179,8 +163,6 @@ public class Main {
                         break;
 
                     case 5: // Borrar.
-
-                        webResource = client.resource("http://localhost:8090/myApp/myresource");
 
                         System.out.println("Digite el nombre del usuario a eliminar: \n");
                         nombre = lectura.next();
