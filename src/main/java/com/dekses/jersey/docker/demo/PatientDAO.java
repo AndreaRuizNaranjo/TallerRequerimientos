@@ -52,24 +52,25 @@ public class PatientDAO {
 
     }
 
-    public static void updatePatient(Patient p) throws UnknownHostException {
+    public static void updatePatient(Patient p, String idNombre) throws UnknownHostException {
 
         Singleton conexion = Singleton.getInstance();
 
         DBCollection coll = conexion.getDb().getCollection("patient");
         DBObject document = new BasicDBObject();
-        document.put("id", p.getId());
 
-        DBObject searchQuery = new BasicDBObject().append("name", p.getName())
-                .append("address", p.getAddress())
+        document.put("name", idNombre);
+
+        DBObject searchQuery = new BasicDBObject().append("address", p.getAddress())
                 .append("birth", p.getBirth())
                 .append("telephone", p.getTelephone())
                 .append("medicare", p.getMedicare())
                 .append("status", p.getStatus());
+
         coll.update(searchQuery, document);
 
         System.out.println("Paciente " + p.getName() + " modificado exitosamente.");
-        
+
     }
 
     public static void deletePatient(String nombre) {

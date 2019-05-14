@@ -63,24 +63,25 @@ public class Main {
             int opcion = -1;
 
             Scanner lectura = new Scanner(System.in);
-            System.out.println("Bienvenido al sistema de pacientes");
+            System.out.println("¡Bienvenido al sistema de pacientes! Selecciona una opción: \n\n");
             Patient paciente = new Patient();
 
             do {
 
-                System.out.println("1. Mostrar Todos \n 2. Crear. \n 3. Buscar. \n 4.Modificar \n 5. Borrar \n 6. Salir");
+                System.out.println("1. Mostrar Todos.\n 2. Crear.\n 3. Buscar.\n 4.Modificar.\n 5. Borrar.\n 6. Salir.");
                 opcion = lectura.nextInt();
 
                 ObjectMapper mapper = new ObjectMapper();
 
                 switch (opcion) {
+                    
                     case 1: // Mostrar Todos
 
                         List Patients = PatientDAO.getAllPatient();
 
                         for (int i = 0; i < Patients.size(); i++) {
                             paciente = (Patient) Patients.get(i);
-                            paciente.toString();
+                            System.out.println(paciente.toString());
                         }
 
                         break;
@@ -127,15 +128,15 @@ public class Main {
                         String id = lectura.next();
 
                         Patient pacienteRetorno = PatientDAO.getPatient(id);
-                        pacienteRetorno.toString();
+                        System.out.println(pacienteRetorno.toString());
 
                         break;
 
                     case 4: // Modificar.
-
-                        System.out.println("Ingrese el nuevo nombre");
-                        nombre = lectura.next();
-                        paciente.setName(nombre);
+                        
+                        System.out.println("Ingrese el nombre del paciente a modificar:");
+                        String idNombre = lectura.next();
+                        paciente.setName(idNombre);
 
                         System.out.println("Ingrese la nueva direccion");
                         direccion = lectura.next();
@@ -157,7 +158,7 @@ public class Main {
                         status = lectura.next();
                         paciente.setStatus(status);
 
-                        PatientDAO.updatePatient(paciente);
+                        PatientDAO.updatePatient(paciente, idNombre);
                         System.out.println("Listo! c: ");
 
                         break;
@@ -178,7 +179,7 @@ public class Main {
 
                 }
 
-            } while (opcion != 6);
+            } while (opcion != 5);
 
         } catch (Exception e) {
 

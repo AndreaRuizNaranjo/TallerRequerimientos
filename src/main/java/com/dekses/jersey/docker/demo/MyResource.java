@@ -42,9 +42,10 @@ public class MyResource {
     }
  
     @PUT
+    @Path("/{idNombre}")
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-    public void updatePatient(Patient p) throws UnknownHostException {
-        PatientDAO.updatePatient(p);
+    public void updatePatient(Patient p, @PathParam("idNombre") String idNombre) throws UnknownHostException {
+        PatientDAO.updatePatient(p, idNombre);
     }
  
     @DELETE
